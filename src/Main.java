@@ -32,6 +32,8 @@ public class Main {
         boolean forward = true;
         boolean winner = false;
         int position = Players.getNextPlayerPosition(forward) - 1; // 0 position
+        int cardsToGet = 0;
+        boolean nextOneLosesTurn = false;
         //game loop
         while (!winner) { ////// ////// ////// ////// ////// ///// //// ///// ///// ////
             System.out.println("Table card: " + usedCards.getUpperUsedCard().getNumber() + " " + usedCards.getUpperUsedCard().getColor());
@@ -41,8 +43,28 @@ public class Main {
                 position = players.getPlayers().size() - 1;
             else if (position > players.getPlayers().size() - 1)
                 position = 0;
+            if (nextOneLosesTurn) {
+                if (forward)
+                    position++;
+                else
+                    position--;
+                nextOneLosesTurn = false;
+                if (position < 0)
+                    position = players.getPlayers().size() - 1;
+                else if (position > players.getPlayers().size() - 1)
+                    position = 0;
+            }
             System.out.println("Current player: " + players.getPlayers().get(position).getName());
             Player currentPlayer = players.getPlayers().get(position);
+            if (cardsToGet > 0) {
+                for (int i = cardsToGet; i <= 0; i--) {
+                    currentPlayer.addACard(deck.drawCard());
+                    deck.removeUpperCard();
+                }
+                System.out.println("Player: " + currentPlayer.getName() + " drew " + cardsToGet + " cards");
+                cardsToGet = 0;
+            }
+
             // choose n check card validation
             boolean valid = false;
             int playerTry = 1;
@@ -63,11 +85,17 @@ public class Main {
                     } else { // to bot petaei swsti karta
                         valid = true;
                         System.out.println(currentPlayer.getName() + " throws " + thrownCard.getNumber() + " " + thrownCard.getColor());
-                        if (thrownCard.getNumber().equals("allagi foras")){
+                        if (thrownCard.getNumber().equals("allagi foras")) {
                             if (forward)
-                                forward=false;
+                                forward = false;
                             else
-                                forward=true;
+                                forward = true;
+                        }
+                        if (thrownCard.getNumber().equals("o epomenos pairnei 2")) {
+                            cardsToGet = 2;
+                        }
+                        if (thrownCard.getNumber().equals("o epomenos xanei seira")) {
+                            nextOneLosesTurn = true;
                         }
                         usedCards.addUsedCard(thrownCard);
                         // svinw tin karta pou petakse to bot
@@ -93,11 +121,17 @@ public class Main {
                         if (currentPlayer.cardValidation(usedCards.getUpperUsedCard().getNumber(), usedCards.getUpperUsedCard().getColor(), thrownCard)) {
                             valid = true;
                             System.out.println("Good choice, you threw " + thrownCard.getColor() + " " + thrownCard.getNumber());
-                            if (thrownCard.getNumber().equals("allagi foras")){
+                            if (thrownCard.getNumber().equals("allagi foras")) {
                                 if (forward)
-                                    forward=false;
+                                    forward = false;
                                 else
-                                    forward=true;
+                                    forward = true;
+                            }
+                            if (thrownCard.getNumber().equals("o epomenos pairnei 2")) {
+                                cardsToGet = 2;
+                            }
+                            if (thrownCard.getNumber().equals("o epomenos xanei seira")) {
+                                nextOneLosesTurn = true;
                             }
                             usedCards.addUsedCard(thrownCard);
                             // svinw tin karta pou petaksa
