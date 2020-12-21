@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,6 +35,7 @@ public class Main {
         int position = Players.getNextPlayerPosition(forward) - 1; // 0 position
         int cardsToGet = 0;
         boolean nextOneLosesTurn = false;
+        String playerSelectColor = null;
         //game loop
         while (!winner) { ////// ////// ////// ////// ////// ///// //// ///// ///// ////
             System.out.println("Table card: " + usedCards.getUpperUsedCard().getNumber() + " " + usedCards.getUpperUsedCard().getColor());
@@ -57,7 +59,7 @@ public class Main {
             System.out.println("Current player: " + players.getPlayers().get(position).getName());
             Player currentPlayer = players.getPlayers().get(position);
             if (cardsToGet > 0) {
-                for (int i = cardsToGet; i <= 0; i--) {
+                for (int i = cardsToGet; i > 0; i--) {
                     currentPlayer.addACard(deck.drawCard());
                     deck.removeUpperCard();
                 }
@@ -71,8 +73,11 @@ public class Main {
             while (!valid) { ////// ////// ////// ////// ////// ///// //// ///// ///// ////
                 if (currentPlayer.isBot()) {
                     System.out.println("Bot " + currentPlayer.getName() + " is playing now");
-                    thrownCard = currentPlayer.chooseCardBot(usedCards.getUpperUsedCard().getNumber(), usedCards.getUpperUsedCard().getColor());
-                    if (thrownCard == null) {
+                    if (playerSelectColor == null)
+                        thrownCard = currentPlayer.chooseCardBot(usedCards.getUpperUsedCard().getNumber(), usedCards.getUpperUsedCard().getColor());
+                    else
+                        thrownCard = currentPlayer.chooseCardBot(playerSelectColor);
+                    if (thrownCard == null) { // den exei karta na petaksei
                         if (playerTry < 2) {
                             System.out.println("Bot: " + currentPlayer.getName() + " takes a card from the table.");
                             playerTry++;
@@ -84,12 +89,10 @@ public class Main {
                         }
                     } else { // to bot petaei swsti karta
                         valid = true;
+                        playerSelectColor=null;
                         System.out.println(currentPlayer.getName() + " throws " + thrownCard.getNumber() + " " + thrownCard.getColor());
                         if (thrownCard.getNumber().equals("allagi foras")) {
-                            if (forward)
-                                forward = false;
-                            else
-                                forward = true;
+                            forward = !forward;
                         }
                         if (thrownCard.getNumber().equals("o epomenos pairnei 2")) {
                             cardsToGet = 2;
@@ -97,14 +100,37 @@ public class Main {
                         if (thrownCard.getNumber().equals("o epomenos xanei seira")) {
                             nextOneLosesTurn = true;
                         }
+                        if (thrownCard.getNumber().equals("balander")) {
+                            //playerSelectColor = "kokkino";
+                            int randomNum = ThreadLocalRandom.current().nextInt(1, 4 + 1);
+                            switch (randomNum) {
+                                case 1: {playerSelectColor = "kokkino"; break;}
+                                case 2: {playerSelectColor = "prasino"; break;}
+                                case 3: {playerSelectColor = "kitrino"; break;}
+                                case 4: {playerSelectColor = "mple"; break;}
+                            }
+                            System.out.println("Bot " + currentPlayer.getName() + " chooses " + playerSelectColor);
+                        }
+                        if (thrownCard.getNumber().equals("o epomenos pairnei 4")) {
+                           // playerSelectColor = "kokkino";
+                            int randomNum = ThreadLocalRandom.current().nextInt(1, 4 + 1);
+                            switch (randomNum) {
+                                case 1: {playerSelectColor = "kokkino"; break;}
+                                case 2: {playerSelectColor = "prasino"; break;}
+                                case 3: {playerSelectColor = "kitrino"; break;}
+                                case 4: {playerSelectColor = "mple"; break;}
+                            }
+                            System.out.println("Bot " + currentPlayer.getName() + " chooses " + playerSelectColor);
+                            cardsToGet=4;
+                        }
                         usedCards.addUsedCard(thrownCard);
                         // svinw tin karta pou petakse to bot
                         currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
 
                     }
-                    // IF NOT A BOT ||||                while (!valid || playerTry <2)
+                    // IF NOT A BOT ||||                while (!valid)
                 } else {
-                    ArrayList<String> oikartesmou = new ArrayList<>();
+                    ArrayList<String> oikartesmou;
                     oikartesmou = currentPlayer.getPlayerCardsToString();
                     int counter = 1;
                     for (String i : oikartesmou) {
@@ -118,24 +144,91 @@ public class Main {
                     if (option < currentPlayer.getPlayerCards().size()) {
                         thrownCard = currentPlayer.getPlayerCards().get(option);
                         // an petakses lathos karta ---- petaw swsti karta
-                        if (currentPlayer.cardValidation(usedCards.getUpperUsedCard().getNumber(), usedCards.getUpperUsedCard().getColor(), thrownCard)) {
-                            valid = true;
-                            System.out.println("Good choice, you threw " + thrownCard.getColor() + " " + thrownCard.getNumber());
-                            if (thrownCard.getNumber().equals("allagi foras")) {
-                                if (forward)
-                                    forward = false;
-                                else
-                                    forward = true;
+                        if (playerSelectColor == null) {
+                            if (currentPlayer.cardValidation(usedCards.getUpperUsedCard().getNumber(), usedCards.getUpperUsedCard().getColor(), thrownCard)) {
+                                valid = true;
+                                System.out.println("Good choice, you threw " + thrownCard.getColor() + " " + thrownCard.getNumber());
+                                if (thrownCard.getNumber().equals("allagi foras")) {
+                                    forward = !forward;
+                                }
+                                if (thrownCard.getNumber().equals("o epomenos pairnei 2")) {
+                                    cardsToGet = 2;
+                                }
+                                if (thrownCard.getNumber().equals("o epomenos xanei seira")) {
+                                    nextOneLosesTurn = true;
+                                }
+                                if (thrownCard.getNumber().equals("balander")) {
+                                    //playerSelectColor = "kokkino";
+                                    System.out.printf("\nSelect the desired color\n1. kokkino\n2. prasino\n3. kitrino\n4. mple\n");
+                                    int color = input.nextInt();
+                                    switch (color) {
+                                        case 1: {playerSelectColor = "kokkino"; break;}
+                                        case 2: {playerSelectColor = "prasino"; break;}
+                                        case 3: {playerSelectColor = "kitrino"; break;}
+                                        case 4: {playerSelectColor = "mple"; break;}
+                                    }
+                                    System.out.println(currentPlayer.getName() + " chooses " + playerSelectColor);
+                                }
+                                if (thrownCard.getNumber().equals("o epomenos pairnei 4")) {
+                                   // playerSelectColor = "kokkino";
+                                    System.out.printf("\nSelect the desired color\n1. kokkino\n2. prasino\n3. kitrino\n4. mple\n");
+                                    int color = input.nextInt();
+                                    switch (color) {
+                                        case 1: {playerSelectColor = "kokkino"; break;}
+                                        case 2: {playerSelectColor = "prasino"; break;}
+                                        case 3: {playerSelectColor = "kitrino"; break;}
+                                        case 4: {playerSelectColor = "mple"; break;}
+                                    }
+                                    System.out.println(currentPlayer.getName() + " chooses " + playerSelectColor);
+                                    cardsToGet = 4;
+                                }
+                                usedCards.addUsedCard(thrownCard);
+                                // svinw tin karta pou petaksa
+                                currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
                             }
-                            if (thrownCard.getNumber().equals("o epomenos pairnei 2")) {
-                                cardsToGet = 2;
+                        }else {
+                            if (currentPlayer.cardValidation(thrownCard.getColor(), playerSelectColor)) {
+                                valid = true;
+                                playerSelectColor = null;
+                                System.out.println("Good choice, you threw " + thrownCard.getColor() + " " + thrownCard.getNumber());
+                                if (thrownCard.getNumber().equals("allagi foras")) {
+                                    forward = !forward;
+                                }
+                                if (thrownCard.getNumber().equals("o epomenos pairnei 2")) {
+                                    cardsToGet = 2;
+                                }
+                                if (thrownCard.getNumber().equals("o epomenos xanei seira")) {
+                                    nextOneLosesTurn = true;
+                                }
+                                if (thrownCard.getNumber().equals("balander")) {
+                                   // playerSelectColor = "kokkino";
+                                    System.out.printf("\nSelect the desired color\n1. kokkino\n2. prasino\n3. kitrino\n4. mple\n");
+                                    int color = input.nextInt();
+                                    switch (color) {
+                                        case 1: {playerSelectColor = "kokkino"; break;}
+                                        case 2: {playerSelectColor = "prasino"; break;}
+                                        case 3: {playerSelectColor = "kitrino"; break;}
+                                        case 4: {playerSelectColor = "mple"; break;}
+                                    }
+                                    System.out.println(currentPlayer.getName() + " chooses " + playerSelectColor);
+                                }
+                                if (thrownCard.getNumber().equals("o epomenos pairnei 4")) {
+                                   // playerSelectColor = "kokkino";
+                                    System.out.printf("\nSelect the desired color\n1. kokkino\n2. prasino\n3. kitrino\n4. mple\n");
+                                    int color = input.nextInt();
+                                    switch (color) {
+                                        case 1: {playerSelectColor = "kokkino"; break;}
+                                        case 2: {playerSelectColor = "prasino"; break;}
+                                        case 3: {playerSelectColor = "kitrino"; break;}
+                                        case 4: {playerSelectColor = "mple"; break;}
+                                    }
+                                    System.out.println(currentPlayer.getName() + " chooses " + playerSelectColor);
+                                    cardsToGet=4;
+                                }
+                                usedCards.addUsedCard(thrownCard);
+                                // svinw tin karta pou petaksa
+                                currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
                             }
-                            if (thrownCard.getNumber().equals("o epomenos xanei seira")) {
-                                nextOneLosesTurn = true;
-                            }
-                            usedCards.addUsedCard(thrownCard);
-                            // svinw tin karta pou petaksa
-                            currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
                         }
                     } else { // EPELEKSA NO HAVE
                         System.out.println("No have pressed! ");
@@ -154,7 +247,17 @@ public class Main {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                if (currentPlayer.getPlayerCards().size() == 1)
+                    System.out.println("Player: " + currentPlayer.getName() + " says  ------>>> UNO <<<-------    !!!!");
+                if (currentPlayer.getPlayerCards().size() == 0) {
+                    winner = true;
+                    System.out.println("Player: " + currentPlayer.getName() + " WON !!!!!!!!!!!!!!!!!");
+                }
             } // telos gyrou paixti
+            if (deck.getDeckAvailableCards()<6) {
+                usedCards.shuffleUsedCards();
+                deck.setCards(usedCards.getUsedCards());
+            }
             if (forward)
                 position++;
             else position--;

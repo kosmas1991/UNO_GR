@@ -52,11 +52,27 @@ public class Player {
         return theChosenOne;
     }
 
+    public Card chooseCardBot (String color) { ////// PAIZEI MPALANTER, METHOD OVERLOADING
+        Card theChosenOne = null;
+        for (Card card : playerCards) {
+            if (card.getColor().equals(color))
+                theChosenOne = card;
+        }
+        return theChosenOne;
+    }
+
     public boolean cardValidation(String number, String color, Card thrownCard) {
             if (thrownCard.getColor().equals(color) || thrownCard.getNumber().equals(number) || thrownCard.getColor().equals("mayro"))
                 return true;
             else
                 return false;
+    }
+
+    public boolean cardValidation(String color, String playerSelectColor) {
+        if (color == playerSelectColor)
+            return true;
+        else
+            return false;
     }
 
     public void deleteSpecifiedCard (String number, String color) {

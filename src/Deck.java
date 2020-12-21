@@ -12,6 +12,10 @@ public class Deck {
         return cards;
     }
 
+    public void setCards(ArrayList<Card> cards) {
+        this.cards = cards;
+    }
+
     public ArrayList<Card> create () {
         ArrayList<Card> newDeck = new ArrayList<>();
         ArrayList<String> colors = new ArrayList<>();
@@ -42,8 +46,6 @@ public class Deck {
             newDeck.add(new Card("mayro", "balander"));
         }
 
-//        for (Card i : newDeck)
-//            System.out.println(i.getColor() + " " + i.getNumber());
         return newDeck;
     }
 
