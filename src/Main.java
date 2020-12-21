@@ -25,8 +25,10 @@ public class Main {
             }
 
         // drop upper deck card to used cards field and print it...
-        usedCards.addUsedCard(deck.drawCard());
-        deck.removeUpperCard();
+        do {
+            usedCards.addUsedCard(deck.drawCard());
+            deck.removeUpperCard();
+        } while (usedCards.getUpperUsedCard().getColor().equals("mayro"));
         System.err.println("<--- Game starts --->");
 
         Card thrownCard;
