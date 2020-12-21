@@ -115,7 +115,11 @@ public class Main {
                         deck.removeUpperCard();
                     }
                 }
-
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             } // telos gyrou paixti
             if (forward)
                 position++;
