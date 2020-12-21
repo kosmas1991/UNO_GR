@@ -15,4 +15,8 @@ public class UsedCards {
     public void addUsedCard (Card card) {
         usedCards.add(card);
     }
+
+    public Card getUpperUsedCard () {
+        return usedCards.get(usedCards.size()-1);
+    }
 }

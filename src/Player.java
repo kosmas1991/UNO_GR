@@ -3,11 +3,13 @@ import java.util.ArrayList;
 public class Player {
     private final String name;
     private final int position;
+    private final boolean isBot;
     private final ArrayList<Card> playerCards = new ArrayList<>();
 
-    public Player(String name, int position) {
+    public Player(String name, int position, boolean isBot) {
         this.name = name;
         this.position = position;
+        this.isBot = isBot;
     }
 
     public String getName() {
@@ -18,7 +20,11 @@ public class Player {
         return position;
     }
 
-    public void addACard (Card card) {
+    public boolean isBot() {
+        return isBot;
+    }
+
+    public void addACard(Card card) {
         playerCards.add(card);
     }
 
@@ -26,17 +32,41 @@ public class Player {
         return playerCards;
     }
 
-    public ArrayList<String> getPlayerCardsToString () {
+    public ArrayList<String> getPlayerCardsToString() {
         ArrayList<String> kartes = new ArrayList<>();
         for (Card card : playerCards)
             kartes.add(card.getColor() + " " + card.getNumber());
         return kartes;
     }
 
-    public int getPlayerNumberOfCards () {
+    public int getPlayerNumberOfCards() {
         return playerCards.size();
     }
 
+    public Card chooseCardBot(String number, String color) {
+        Card theChosenOne = null;
+        for (Card card : playerCards) {
+            if (card.getColor().equals(color) || card.getNumber().equals(number) || card.getColor().equals("mayro"))
+                theChosenOne = card;
+        }
+        return theChosenOne;
+    }
 
+    public boolean cardValidation(String number, String color, Card thrownCard) {
+            if (thrownCard.getColor().equals(color) || thrownCard.getNumber().equals(number) || thrownCard.getColor().equals("mayro"))
+                return true;
+            else
+                return false;
+    }
 
+    public void deleteSpecifiedCard (String number, String color) {
+        int counter = 0;
+        for (Card card : playerCards) {
+            if (card.getNumber().equals(number) && card.getColor().equals(color)) {
+                playerCards.remove(counter);
+                break;
+            }
+            counter++;
+        }
+    }
 }
