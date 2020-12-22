@@ -40,7 +40,7 @@ public class Main {
         String playerSelectColor = null;
         //game loop
         while (!winner) { ////// ////// ////// ////// ////// ///// //// ///// ///// ////
-            System.out.println("Table card: " + usedCards.getUpperUsedCard().getNumber() + " " + usedCards.getUpperUsedCard().getColor());
+            System.out.println("                " + "Table card: " + usedCards.getUpperUsedCard().getNumber() + " " + usedCards.getUpperUsedCard().getColor());
             // check if position out of bound either forwards or backwards
             // also selects current player
             if (position < 0)
@@ -92,7 +92,11 @@ public class Main {
                     } else { // to bot petaei swsti karta
                         valid = true;
                         playerSelectColor=null;
-                        System.out.println(currentPlayer.getName() + " throws " + thrownCard.getNumber() + " " + thrownCard.getColor());
+                        System.out.println("                " +currentPlayer.getName() + " throws " + thrownCard.getNumber() + " " + thrownCard.getColor());
+
+                        usedCards.addUsedCard(thrownCard);
+                        // svinw tin karta pou petakse to bot
+                        currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
                         if (thrownCard.getNumber().equals("allagi foras")) {
                             forward = !forward;
                         }
@@ -125,9 +129,6 @@ public class Main {
                             System.out.println("Bot " + currentPlayer.getName() + " chooses " + playerSelectColor);
                             cardsToGet=4;
                         }
-                        usedCards.addUsedCard(thrownCard);
-                        // svinw tin karta pou petakse to bot
-                        currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
 
                     }
                     // IF NOT A BOT ||||                while (!valid)
@@ -150,6 +151,10 @@ public class Main {
                             if (currentPlayer.cardValidation(usedCards.getUpperUsedCard().getNumber(), usedCards.getUpperUsedCard().getColor(), thrownCard)) {
                                 valid = true;
                                 System.out.println("Good choice, you threw " + thrownCard.getColor() + " " + thrownCard.getNumber());
+
+                                usedCards.addUsedCard(thrownCard);
+                                // svinw tin karta pou petaksa
+                                currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
                                 if (thrownCard.getNumber().equals("allagi foras")) {
                                     forward = !forward;
                                 }
@@ -184,9 +189,6 @@ public class Main {
                                     System.out.println(currentPlayer.getName() + " chooses " + playerSelectColor);
                                     cardsToGet = 4;
                                 }
-                                usedCards.addUsedCard(thrownCard);
-                                // svinw tin karta pou petaksa
-                                currentPlayer.deleteSpecifiedCard(thrownCard.getNumber(), thrownCard.getColor());
                             }
                         }else {
                             if (currentPlayer.cardValidation(thrownCard.getColor(), playerSelectColor)) {
@@ -257,7 +259,8 @@ public class Main {
                 }
             } // telos gyrou paixti
             if (deck.getDeckAvailableCards()<6) {
-                usedCards.shuffleUsedCards();
+                usedCards.shuffleUsedCardsWithoutUpper();
+                System.out.println("    ---> Caution: table is empty, RESHUFFLING ...  <<--- ................................................................");
                 deck.setCards(usedCards.getUsedCards());
             }
             if (forward)
