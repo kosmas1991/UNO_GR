@@ -12,8 +12,8 @@ public class Deck {
         return cards;
     }
 
-    public void setCards(ArrayList<Card> cards) {
-        this.cards = cards;
+    public void setCards(ArrayList<Card> cards2) {
+        this.cards.addAll(cards2);
     }
 
     public ArrayList<Card> create () {
@@ -68,6 +68,12 @@ public class Deck {
 
     public int getDeckAvailableCards (){
         return cards.size();
+    }
+
+    public void emptyDeck () {
+        for (int i=0; i<cards.size() - 1; i++){
+            cards.remove(i);
+        }
     }
 
 

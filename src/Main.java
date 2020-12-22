@@ -13,7 +13,7 @@ public class Main {
         Scanner input = new Scanner(System.in);
         System.out.println("Whats your name?");
         String playerName = input.nextLine();
-        System.out.println("How many bots? (Enter 2-4)");
+        System.out.println("How many bots? (Enter 2-3)");
         int noOfBots = input.nextInt();
         input.nextLine();
         Players players = new Players(playerName, noOfBots);
@@ -142,6 +142,13 @@ public class Main {
                     }
                     System.out.println(counter + ". " + "no have");
                     Scanner input2 = new Scanner(System.in);
+                    //
+                    System.out.println("\tDeck: " + deck.getDeckAvailableCards() + "\tTable: " + usedCards.getUsedCards().size());
+                    System.out.println();
+                    for (Player player : players.getPlayers())
+                        System.out.print(player.getName() + ": " + player.getPlayerNumberOfCards() + "\t");
+                    System.out.println();
+                    //
                     System.out.println("Choose your card");
                     int option = input2.nextInt() - 1;
                     if (option < currentPlayer.getPlayerCards().size()) {
@@ -259,9 +266,15 @@ public class Main {
                 }
             } // telos gyrou paixti
             if (deck.getDeckAvailableCards()<6) {
+                for (int i=0; i<deck.getDeckAvailableCards() - 1; i++) {
+                    usedCards.addToUsedCardsTo0Position(deck.drawCard());
+                    deck.removeUpperCard();
+                }
                 usedCards.shuffleUsedCardsWithoutUpper();
                 System.out.println("    ---> Caution: table is empty, RESHUFFLING ...  <<--- ................................................................");
                 deck.setCards(usedCards.getUsedCards());
+                deck.removeUpperCard();
+                usedCards.deleteAllUsedExceptUpper();
             }
             if (forward)
                 position++;

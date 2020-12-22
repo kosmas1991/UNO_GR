@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class UsedCards {
-    private ArrayList<Card> usedCards = new ArrayList<>();
+    private final ArrayList<Card> usedCards = new ArrayList<>();
 
     public ArrayList<Card> getUsedCards() {
         return usedCards;
@@ -15,8 +15,19 @@ public class UsedCards {
         usedCards.add(temp);
     }
 
+    public void deleteAllUsedExceptUpper () {
+        Card tempCard = usedCards.get(usedCards.size() - 1);
+        usedCards.clear();
+        usedCards.add(tempCard);
+    }
+
+
     public void addUsedCard (Card card) {
         usedCards.add(card);
+    }
+
+    public void addToUsedCardsTo0Position (Card card) {
+        usedCards.add(0,card);
     }
 
     public Card getUpperUsedCard () {
